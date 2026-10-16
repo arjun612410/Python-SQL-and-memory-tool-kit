@@ -1,17 +1,17 @@
 # Python Dunder Methods
 
-`dunder_demo.py` mein custom Python objects ko built-in operations ke saath kaam
-karna sikhaya gaya hai. **Dunder** ka matlab **double underscore** hai:
-`__name__` jaise methods ke naam ke aage aur peeche double underscores hote hain.
+`dunder_demo.py` teaches custom Python objects to work with built-in operations.
+**Dunder** means **double underscore**: method names such as `__name__` have
+double underscores at the beginning and end.
 
-Python in methods ko `len(obj)`, `str(obj)`, `obj1 + obj2` jaise operations ke
-dauran khud call karta hai. Isse apni classes ke objects ka behavior define
-kiya ja sakta hai.
+Python calls these methods automatically during operations such as `len(obj)`,
+`str(obj)`, and `obj1 + obj2`. This lets you define the behavior of objects
+from your own classes.
 
-## 1. `__init__` — object ko initialize karna
+## 1. `__init__` — initializing an object
 
-Object banne ke baad `__init__` uske attributes set karta hai. `self` us naye
-object ko refer karta hai.
+After an object is created, `__init__` sets its attributes. `self` refers to
+that new object.
 
 ```python
 class Student:
@@ -25,15 +25,15 @@ print(student.name)  # Arjun
 print(student.age)   # 20
 ```
 
-`Student("Arjun", 20)` likhne par Python object banata hai aur uske liye
-`__init__` ko arguments deta hai. Aam taur par `__init__` koi value return
-nahi karta; iska kaam object ko initialize karna hai.
+When you write `Student("Arjun", 20)`, Python creates an object and passes the
+arguments to its `__init__` method. Usually, `__init__` does not return a value;
+its job is to initialize the object.
 
 ## 2. `__str__` — user-friendly text
 
-`__str__` define karta hai ki `str(obj)` ya `print(obj)` par object kaunsa
-readable text de. Agar yeh method na ho, to print mein aam taur par class aur
-object ki identity wali default representation dikhti hai.
+`__str__` defines what readable text the object provides for `str(obj)` or
+`print(obj)`. If this method is not defined, printing typically shows the
+default representation, which includes the class and the object's identity.
 
 ```python
 class Student:
@@ -49,12 +49,12 @@ print(Student("Arjun", 20))
 # Arjun is 20 years old.
 ```
 
-`__str__` ko **string** return karni chahiye.
+`__str__` should return a **string**.
 
 ## 3. `__repr__` — developer-friendly representation
 
-`__repr__` debugging aur interactive console ke liye object ki informative
-representation deta hai. `repr(obj)` ise explicitly call karta hai.
+`__repr__` provides an informative representation of an object for debugging
+and the interactive console. `repr(obj)` calls it explicitly.
 
 ```python
 class Student:
@@ -71,14 +71,14 @@ print(repr(student))
 # Student(name='Arjun', age=20)
 ```
 
-`!r` f-string mein value ke `repr()` ko use karta hai. Agar `__str__`
-define na ho, to `str(obj)` aam taur par `__repr__` par fallback karta hai.
+`!r` uses the value's `repr()` in an f-string. If `__str__` is not defined,
+`str(obj)` usually falls back to `__repr__`.
 
-## 4. `__eq__` — `==` ka behavior
+## 4. `__eq__` — the behavior of `==`
 
-`__eq__` tay karta hai ki do custom objects `==` se kab equal maane jayenge.
-Isse define na karne par, aam taur par do alag objects equal nahi hote, chahe
-unke attributes same hon.
+`__eq__` determines when two custom objects are considered equal using `==`.
+If it is not defined, two distinct objects are generally not equal, even if
+their attributes are the same.
 
 ```python
 class Student:
@@ -95,15 +95,15 @@ class Student:
 print(Student("Arjun", 20) == Student("Arjun", 20))  # True
 ```
 
-Yahan equality `name` aur `age` par based hai. `NotImplemented` doosre type
-ke object ke comparison ko Python ke doosre operand ya normal fallback ke
-liye chhodta hai.
+Here, equality is based on `name` and `age`. `NotImplemented` lets Python try
+the other operand's comparison method or use its normal fallback behavior
+when comparing with an object of another type.
 
-## 5. `__hash__` — sets aur dictionary keys
+## 5. `__hash__` — sets and dictionary keys
 
-`__hash__` integer hash value deta hai. Hash-based collections, jaise `set`
-aur `dict` keys, iska istemal karte hain. Agar `__eq__` ke mutabik do objects
-equal hain, to unka hash bhi same hona zaroori hai.
+`__hash__` returns an integer hash value. Hash-based collections, such as
+`set` and `dict` keys, use it. If two objects are equal according to
+`__eq__`, they must also have the same hash.
 
 ```python
 class Student:
@@ -127,16 +127,16 @@ print(hash(first) == hash(second))     # True
 print(len({first, second}))            # 1
 ```
 
-Hash values alag program runs mein badal sakte hain; isliye kisi fixed hash
-number ko output ke roop mein expect nahi karna chahiye. Hashable objects ko
-set ya dictionary key banane ke baad unke equality/hash mein istemal hone
-waale attributes badalna bhi unsafe hai. Mutable objects ke liye aksar
-`__hash__` define nahi karna chahiye.
+Hash values can change between program runs, so you should not expect a
+specific hash number as output. It is also unsafe to change attributes used
+for equality or hashing after a hashable object has been added to a set or
+used as a dictionary key. For mutable objects, you generally should not
+define `__hash__`.
 
-## 6. `__len__` — `len(obj)` ka behavior
+## 6. `__len__` — the behavior of `len(obj)`
 
-`__len__` batata hai ki `len(obj)` par kaunsi length milegi. Isse
-non-negative integer return karna chahiye.
+`__len__` determines the length returned by `len(obj)`. It should return a
+non-negative integer.
 
 ```python
 class Playlist:
@@ -151,10 +151,10 @@ playlist = Playlist(["Song1", "Song2", "Song3"])
 print(len(playlist))  # 3
 ```
 
-## 7. `__bool__` — object ko true ya false maanna
+## 7. `__bool__` — determining whether an object is true or false
 
-`__bool__` define karta hai ki `bool(obj)` aur `if obj:` mein object true
-maana jayega ya false. Is method ko `True` ya `False` return karna chahiye.
+`__bool__` defines whether an object is considered true or false by
+`bool(obj)` and `if obj:`. This method should return `True` or `False`.
 
 ```python
 class BankAccount:
@@ -173,10 +173,10 @@ else:
 # Account has money
 ```
 
-## 8. `__getitem__` — index se item lena
+## 8. `__getitem__` — getting an item by index
 
-`__getitem__` `obj[index]` ka behavior define karta hai. Example mein list ko
-index karne ka kaam class apne andar ki `songs` list ko deti hai.
+`__getitem__` defines the behavior of `obj[index]`. In this example, the class
+delegates indexing to its internal `songs` list.
 
 ```python
 class Playlist:
@@ -192,11 +192,12 @@ print(playlist[0])  # Believer
 print(playlist[1])  # Faded
 ```
 
-Index valid na ho to andar ki list ki tarah `IndexError` aa sakta hai.
+If the index is invalid, an `IndexError` may be raised, just as it would be
+for the underlying list.
 
-## 9. `__contains__` — `in` operator
+## 9. `__contains__` — the `in` operator
 
-`__contains__` define karta hai ki `item in obj` ka result kya hoga.
+`__contains__` defines the result of `item in obj`.
 
 ```python
 class Playlist:
@@ -212,14 +213,13 @@ print("Faded" in playlist)       # True
 print("Shape of you" in playlist)  # False
 ```
 
-Is method ka result boolean hona chahiye. Agar `__contains__` na ho, to
-Python kuch iterables ke liye iteration ke zariye membership check kar sakta
-hai.
+This method should return a boolean. If `__contains__` is not defined, Python
+can check membership by iterating over some iterables.
 
-## 10. `__add__` — `+` operator
+## 10. `__add__` — the `+` operator
 
-`__add__` batata hai ki `obj1 + obj2` kaise kaam karega. Yeh example do
-points ke `x` aur `y` coordinates ko add karke naya point banata hai.
+`__add__` defines how `obj1 + obj2` works. This example adds the `x` and `y`
+coordinates of two points to create a new point.
 
 ```python
 class Point:
@@ -241,14 +241,14 @@ second = Point(5, 5)
 print(first + second)  # (6, 7)
 ```
 
-`__add__` ko result ke roop mein naya `Point` object milta hai; `__str__`
-use print karne layak `(x, y)` text mein badalta hai.
+`__add__` returns a new `Point` object; `__str__` converts it into `(x, y)`
+text that can be printed.
 
-## `Money` example: `__repr__`, `__eq__`, aur `__hash__`
+## `Money` example: `__repr__`, `__eq__`, and `__hash__`
 
-File ka `Money` example teen methods ko ek class mein jodta hai. Yahan do
-money records tab equal hain jab unka naam, withdrawal aur deposit sab same
-hon.
+The `Money` example in the file combines three methods in one class. Here, two
+money records are equal when their name, withdrawal, and deposit are all the
+same.
 
 ```python
 class Money:
@@ -283,15 +283,15 @@ print(repr(first))      # Money(name='Arjun', withdraw=500, deposit=1000)
 print(len({first, second}))  # 1
 ```
 
-`__eq__` aur `__hash__` mein wahi fields use ki gayi hain, isliye equal
-`Money` objects set mein ek hi entry banate hain. Is example mein fields ko
-object banne ke baad badalne se bachna chahiye jab object set/dictionary key
-ke roop mein use ho raha ho.
+The same fields are used in `__eq__` and `__hash__`, so equal `Money` objects
+become a single entry in a set. In this example, avoid changing the fields
+after object creation while the object is being used in a set or as a
+dictionary key.
 
-## `Playlist` example: length, indexing, aur iteration
+## `Playlist` example: length, indexing, and iteration
 
-File ka aakhri example `__len__`, `__getitem__`, aur `__iter__` ko ek saath
-use karta hai. `__iter__` songs par seedha loop chalata hai.
+The final example in the file uses `__len__`, `__getitem__`, and `__iter__`
+together. `__iter__` iterates directly over the songs.
 
 ```python
 class Playlist:
@@ -316,13 +316,13 @@ for song in playlist:
     print(song)
 ```
 
-`__iter__` iterator deta hai; `for` loop usse har song ek-ek karke leta hai.
-Is class mein `__getitem__` indexing deta hai aur `__len__` playlist ki
-length.
+`__iter__` returns an iterator; the `for` loop gets each song from it one at
+a time. In this class, `__getitem__` provides indexing and `__len__` provides
+the playlist's length.
 
-## File chalana
+## Running the file
 
-`week1/day2` folder se:
+From the `week1/day2` folder:
 
 ```bash
 python dunder_demo.py
